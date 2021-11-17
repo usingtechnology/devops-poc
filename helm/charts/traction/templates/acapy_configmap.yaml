@@ -24,3 +24,6 @@ data:
     outbound-transport: http
     wallet-type: 'indy'
     log-level: {{ .Values.acapy.staticArgs.logLevel }}
+    multitenant: {{ .Values.acapy.staticArgs.multitenant }}
+    multitenant-admin: {{ .Values.acapy.staticArgs.multitenantAdmin }}
+    jwt-secret: {{ .Values.acapy.staticArgs.jwtSecret }}
