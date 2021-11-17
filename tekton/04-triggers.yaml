@@ -1,0 +1,65 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: devops-poc-gh-listener
+spec:
+  namespaceSelector: {}
+  podTemplate: {}
+  resources: {}
+  serviceAccountName: devops-poc-sa
+  triggers:
+    - bindings:
+        - kind: TriggerBinding
+          ref: devops-poc-pr-binding
+      interceptors:
+        - github:
+            eventTypes:
+              - pull_request
+            secretRef:
+              secretKey: secretToken
+              secretName: devops-poc-gh-secret
+        - cel:
+            filter: 'body.action in [''opened'', ''synchronize'', ''reopened'']'
+      name: devops-poc-gh-listener
+      template:
+        ref: devops-poc-pr-pipeline-template
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: devops-poc-pr-binding
+spec:
+  params:
+    - name: gitrepositoryurl
+      value: $(body.repository.clone_url)
+    - name: gitrevision
+      value: $(body.pull_request.head.sha)
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: devops-poc-pr-pipeline-template
+spec:
+  params:
+    - name: gitrevision
+      description: The git revision (SHA)
+      default: main
+    - name: gitrepositoryurl
+      description: The git repository url ("https://github.com/foo/bar.git")
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: devops-poc-pipeline-run-
+      spec:
+        pipelineRef:
+          name: devops-poc-pipeline
+        resources:
+          - name: source
+            resourceSpec:
+              type: git
+              params:
+                - name: revision
+                  value: $(tt.params.gitrevision)
+                - name: url
+                  value: $(tt.params.gitrepositoryurl)

@@ -1,0 +1,14 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: devops-poc-gh-listener
+spec:
+  host: devops-poc-gh-listener-tools.apps.silver.devops.gov.bc.ca
+  path: /hooks
+  to:
+    kind: Service
+    name: el-devops-poc-gh-listener
+    weight: 100
+  port:
+    targetPort: http-listener
+  wildcardPolicy: None
