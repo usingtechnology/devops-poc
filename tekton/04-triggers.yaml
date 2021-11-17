@@ -54,12 +54,19 @@ spec:
       spec:
         pipelineRef:
           name: devops-poc-pipeline
-        resources:
-          - name: source
-            resourceSpec:
-              type: git
-              params:
-                - name: revision
-                  value: $(tt.params.gitrevision)
-                - name: url
-                  value: $(tt.params.gitrepositoryurl)
+        params:
+          - name: git-revision
+            value: $(tt.params.gitrevision)
+          - name: git-url
+            value: $(tt.params.gitrepositoryurl)
+        serviceAccountName: pipeline
+        workspaces:
+          - name: shared-workspace
+            volumeClaimTemplate:
+              metadata:
+                name: devops-poc-pvc
+              spec:
+                accessModes: ["ReadWriteOnce"]
+                resources:
+                   requests:
+                      storage: 1Gi
