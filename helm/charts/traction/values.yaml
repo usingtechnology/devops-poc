@@ -201,6 +201,9 @@ acapy:
     monitorPing: true
     publicInvites: true
     logLevel: info
+    multitenant: true
+    multitenantAdmin: true
+    jwtSecret: 1234567
 
 postgresql:
   # --  PostgreSQL service configuration
