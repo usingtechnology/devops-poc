@@ -242,3 +242,62 @@ tls:
 {{- end -}}
 
 
+
+{{/*
+Create a default fully qualified bpa name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "servicea.fullname" -}}
+{{ template "global.fullname" . }}-service-a
+{{- end -}}
+
+{{/*
+Common servicea labels
+*/}}
+{{- define "servicea.labels" -}}
+helm.sh/chart: {{ include "global.chart" . }}
+{{ include "servicea.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector servicea labels
+*/}}
+{{- define "servicea.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "global.fullname" . }}-service-a
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "servicea.serviceAccountName" -}}
+{{- if .Values.servicea.serviceAccount.create }}
+{{- default (include "servicea.fullname" .) .Values.servicea.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.servicea.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+{{/*
+generate hosts if not overriden
+*/}}
+{{- define "servicea.host" -}}
+{{- if .Values.servicea.ingress.hosts -}}
+{{- (index .Values.servicea.ingress.hosts 0).host -}}
+{{- else }}
+{{- include "servicea.fullname" . }}{{ .Values.global.ingressSuffix -}}
+{{- end -}}
+{{- end }}
+
+{{- define "servicea.openshift.route.tls" -}}
+{{- if (.Values.servicea.openshift.route.tls.enabled) -}}
+tls:
+  insecureEdgeTerminationPolicy: {{ .Values.servicea.openshift.route.tls.insecureEdgeTerminationPolicy }}
+  termination: {{ .Values.servicea.openshift.route.tls.termination }}
+{{- end -}}
+{{- end -}}
+
