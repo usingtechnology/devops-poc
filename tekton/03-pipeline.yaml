@@ -52,8 +52,25 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-  workspaces:
-    - name: shared-workspace
+    - name: buildah-service-a
+      taskRef:
+        name: buildah
+      runAfter:
+        - fetch-repository
+      params:
+        - name: IMAGE
+          value: 'image-registry.openshift-image-registry.svc:5000/f6b17d-tools/devops-poc-service-a'
+        - name: TLSVERIFY
+          value: 'false'
+        - name: DOCKERFILE
+          value: service-a/src/Dockerfile
+        - name: CONTEXT
+          value: service-a/src
+      workspaces:
+        - name: source
+          workspace: shared-workspace  
+    workspaces:
+      - name: shared-workspace
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task
