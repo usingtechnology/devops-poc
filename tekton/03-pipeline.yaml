@@ -29,6 +29,24 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
+    - name: buildah-service-a
+      taskRef:
+        kind: ClusterTask
+        name: buildah
+      runAfter:
+        - fetch-repository
+      params:
+        - name: IMAGE
+          value: 'image-registry.openshift-image-registry.svc:5000/f6b17d-tools/devops-poc-service-a'
+        - name: TLSVERIFY
+          value: 'false'
+        - name: DOCKERFILE
+          value: service-a/src/Dockerfile
+        - name: CONTEXT
+          value: service-a/src
+      workspaces:
+        - name: source
+          workspace: shared-workspace  
     - name: helm-upgrade-from-source
       params:
         - name: charts_dir
@@ -45,7 +63,7 @@ spec:
           value: >-
             docker.io/lachlanevenson/k8s-helm@sha256:5c792f29950b388de24e7448d378881f68b3df73a7b30769a6aa861061fd08ae
       runAfter:
-        - fetch-repository
+        - buildah-service-a
       taskRef:
         kind: Task
         name: devops-poc-helm
