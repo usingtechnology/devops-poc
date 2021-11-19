@@ -20,7 +20,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      verifierccountName: {{ include "verifier.verifierccountName" . }}
+      serviceAccountName: {{ include "verifier.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.verifier.podSecurityContext | nindent 8 }}
       containers:

@@ -20,7 +20,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      holderccountName: {{ include "holder.holderccountName" . }}
+      serviceAccountName: {{ include "holder.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.holder.podSecurityContext | nindent 8 }}
       containers:
