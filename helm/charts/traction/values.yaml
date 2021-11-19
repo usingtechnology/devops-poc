@@ -206,6 +206,10 @@ acapy:
     jwtSecret: 1234567
 
 postgresql:
+  initdbScripts:
+    setup.sql: |
+      CREATE USER dbuser WITH PASSWORD 'secret';
+      CREATE DATABASE mydb WITH OWNER dbuser;
   # --  PostgreSQL service configuration
   service:
     port: 5432
