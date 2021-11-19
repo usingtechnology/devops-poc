@@ -244,7 +244,7 @@ tls:
 
 
 {{/*
-Create a default fully qualified bpa name.
+Create a default fully qualified servicea name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
 {{- define "servicea.fullname" -}}
@@ -301,3 +301,121 @@ tls:
 {{- end -}}
 {{- end -}}
 
+
+
+{{/*
+Create a default fully qualified holder name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "holder.fullname" -}}
+{{ template "global.fullname" . }}-holder
+{{- end -}}
+
+{{/*
+Common holder labels
+*/}}
+{{- define "holder.labels" -}}
+helm.sh/chart: {{ include "global.chart" . }}
+{{ include "holder.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector holder labels
+*/}}
+{{- define "holder.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "global.fullname" . }}-holder
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "holder.serviceAccountName" -}}
+{{- if .Values.holder.serviceAccount.create }}
+{{- default (include "holder.fullname" .) .Values.holder.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.holder.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+{{/*
+generate hosts if not overriden
+*/}}
+{{- define "holder.host" -}}
+{{- if .Values.holder.ingress.hosts -}}
+{{- (index .Values.holder.ingress.hosts 0).host -}}
+{{- else }}
+{{- include "holder.fullname" . }}{{ .Values.global.ingressSuffix -}}
+{{- end -}}
+{{- end }}
+
+{{- define "holder.openshift.route.tls" -}}
+{{- if (.Values.holder.openshift.route.tls.enabled) -}}
+tls:
+  insecureEdgeTerminationPolicy: {{ .Values.holder.openshift.route.tls.insecureEdgeTerminationPolicy }}
+  termination: {{ .Values.holder.openshift.route.tls.termination }}
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+Create a default fully qualified verifier name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "verifier.fullname" -}}
+{{ template "global.fullname" . }}-verifier
+{{- end -}}
+
+{{/*
+Common verifier labels
+*/}}
+{{- define "verifier.labels" -}}
+helm.sh/chart: {{ include "global.chart" . }}
+{{ include "verifier.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector verifier labels
+*/}}
+{{- define "verifier.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "global.fullname" . }}-verifier
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "verifier.serviceAccountName" -}}
+{{- if .Values.verifier.serviceAccount.create }}
+{{- default (include "verifier.fullname" .) .Values.verifier.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.verifier.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+{{/*
+generate hosts if not overriden
+*/}}
+{{- define "verifier.host" -}}
+{{- if .Values.verifier.ingress.hosts -}}
+{{- (index .Values.verifier.ingress.hosts 0).host -}}
+{{- else }}
+{{- include "verifier.fullname" . }}{{ .Values.global.ingressSuffix -}}
+{{- end -}}
+{{- end }}
+
+{{- define "verifier.openshift.route.tls" -}}
+{{- if (.Values.verifier.openshift.route.tls.enabled) -}}
+tls:
+  insecureEdgeTerminationPolicy: {{ .Values.verifier.openshift.route.tls.insecureEdgeTerminationPolicy }}
+  termination: {{ .Values.verifier.openshift.route.tls.termination }}
+{{- end -}}
+{{- end -}}
