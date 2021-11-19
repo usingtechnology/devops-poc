@@ -15,7 +15,7 @@ TOPICS = ['connections']
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return "<p>Hello, Holder!</p>"
 
 @app.route("/log/topic/<topic>/", methods=['POST'])
 def acapy_event_handler(topic):
@@ -24,9 +24,6 @@ def acapy_event_handler(topic):
 
     if topic in TOPICS:
         app.logger.info(f"HANDLE {topic} event")
-        event = Event(topic=topic, event_raw=str(request))
-        db.session.add(event)
-        db.session.commit()
     else:
         app.logger.info(f"IGNORE {topic} event")
 
