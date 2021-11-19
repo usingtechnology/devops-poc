@@ -29,7 +29,7 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
-    - name: buildah-service-a
+    - name: buildah-holder
       taskRef:
         kind: ClusterTask
         name: buildah
@@ -37,13 +37,31 @@ spec:
         - fetch-repository
       params:
         - name: IMAGE
-          value: 'image-registry.openshift-image-registry.svc:5000/f6b17d-tools/devops-poc-service-a'
+          value: 'image-registry.openshift-image-registry.svc:5000/f6b17d-tools/devops-poc-holder'
         - name: TLSVERIFY
           value: 'false'
         - name: DOCKERFILE
-          value: service-a/src/Dockerfile
+          value: holder/Dockerfile
         - name: CONTEXT
-          value: service-a/src
+          value: holder
+      workspaces:
+        - name: source
+          workspace: shared-workspace  
+    - name: buildah-verifier
+      taskRef:
+        kind: ClusterTask
+        name: buildah
+      runAfter:
+        - buildah-holder
+      params:
+        - name: IMAGE
+          value: 'image-registry.openshift-image-registry.svc:5000/f6b17d-tools/devops-poc-verifier'
+        - name: TLSVERIFY
+          value: 'false'
+        - name: DOCKERFILE
+          value: verifier/Dockerfile
+        - name: CONTEXT
+          value: verifier
       workspaces:
         - name: source
           workspace: shared-workspace  
@@ -63,7 +81,7 @@ spec:
           value: >-
             docker.io/lachlanevenson/k8s-helm@sha256:5c792f29950b388de24e7448d378881f68b3df73a7b30769a6aa861061fd08ae
       runAfter:
-        - buildah-service-a
+        - buildah-verifier
       taskRef:
         kind: Task
         name: devops-poc-helm
