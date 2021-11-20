@@ -206,14 +206,6 @@ acapy:
     jwtSecret: 1234567
 
 postgresql:
-  initdbScripts:
-    setup.sql: |
-      CREATE USER holderuser PASSWORD 'holderPass'; 
-      CREATE USER verifieruser PASSWORD 'verifierPass';
-      CREATE SCHEMA IF NOT EXISTS holder AUTHORIZATION holderuser;
-      CREATE SCHEMA IF NOT EXISTS verifier AUTHORIZATION verifieruser;
-      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA holder TO holderuser;
-      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA verifier TO verifieruser;
   # --  PostgreSQL service configuration
   service:
     port: 5432
@@ -230,6 +222,17 @@ postgresql:
   # -- PostgreSQL Database to create.
   postgresqlDatabase: traction
 
+  initdbUser: transactionuser
+  initdbPassword: change-me
+  initdbScripts:
+    setup.sql: |
+      CREATE USER holderuser PASSWORD 'holderPass'; 
+      CREATE USER verifieruser PASSWORD 'verifierPass';
+      CREATE SCHEMA IF NOT EXISTS holder AUTHORIZATION holderuser;
+      CREATE SCHEMA IF NOT EXISTS verifier AUTHORIZATION verifieruser;
+      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA holder TO holderuser;
+      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA verifier TO verifieruser;
+  
   # --  Persistent Volume Storage configuration. ref: https://kubernetes.io/docs/user-guide/persistent-volumes
   persistence:
     # -- Enable PostgreSQL persistence using Persistent Volume Claims.
