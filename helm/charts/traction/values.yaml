@@ -208,14 +208,21 @@ acapy:
 postgresql:
   initdbScripts:
     setup.sql: |
-      CREATE USER dbuser WITH PASSWORD 'secret';
-      CREATE DATABASE mydb WITH OWNER dbuser;
+      CREATE USER holderuser PASSWORD 'holderPass'; 
+      CREATE USER verifieruser PASSWORD 'verifierPass';
+      CREATE SCHEMA IF NOT EXISTS holder AUTHORIZATION holderuser;
+      CREATE SCHEMA IF NOT EXISTS verifier AUTHORIZATION verifieruser;
+      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA holder TO holderuser;
+      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA verifier TO verifieruser;
   # --  PostgreSQL service configuration
   service:
     port: 5432
 
-  # --  PostgreSQL User to create. Do not change - otherwise non-admin user is created!
-  postgresqlUsername: postgres
+  # --  PostgreSQL admin password - username is postgres!
+  postgresqlPostgresPassword: change-me
+
+  # --  PostgreSQL User to create. This is a non admin user!
+  postgresqlUsername: transactionuser
 
   # --  PostgreSQL Password for the new user. If not set, a random 10 characters password will be used.
   postgresqlPassword: change-me
