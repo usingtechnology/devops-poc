@@ -223,7 +223,8 @@ postgresql:
 
   # - postgres user/admin password
   postgresqlPostgresPassword: change-me
-
+  postgresqlPassword: change-me
+  
   # leave blank so init scripts run as postgres
   postgresqlUsername: 
 
