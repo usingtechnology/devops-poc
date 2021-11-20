@@ -226,13 +226,18 @@ postgresql:
   initdbPassword: change-me
   initdbScripts:
     setup.sql: |
-      CREATE USER holderuser PASSWORD 'holderPass'; 
-      CREATE USER verifieruser PASSWORD 'verifierPass';
-      CREATE SCHEMA IF NOT EXISTS holder AUTHORIZATION holderuser;
-      CREATE SCHEMA IF NOT EXISTS verifier AUTHORIZATION verifieruser;
-      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA holder TO holderuser;
-      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA verifier TO verifieruser;
-  
+      CREATE USER tractionuser2 CREATEDB;
+      CREATE USER holderuser2 PASSWORD 'holderPass'; 
+      CREATE USER verifieruser2 PASSWORD 'verifierPass';
+
+      CREATE DATABASE traction2;
+      \connect traction2
+
+      CREATE SCHEMA IF NOT EXISTS holder2 AUTHORIZATION holderuser2;
+      CREATE SCHEMA IF NOT EXISTS verifier2 AUTHORIZATION verifieruser2;
+
+      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA holder2 TO holderuser2;
+      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA verifier2 TO verifieruser2;  
   # --  Persistent Volume Storage configuration. ref: https://kubernetes.io/docs/user-guide/persistent-volumes
   persistence:
     # -- Enable PostgreSQL persistence using Persistent Volume Claims.
