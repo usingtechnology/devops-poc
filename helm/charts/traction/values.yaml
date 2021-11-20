@@ -206,27 +206,29 @@ acapy:
     jwtSecret: 1234567
 
 postgresql:
+  # --  PostgreSQL service configuration
+  service:
+    port: 5432
+
+  # --  PostgreSQL User to create. Do not change - otherwise non-admin user is created!
+  postgresqlUsername: postgres
+
+  # --  PostgreSQL Password for the new user. If not set, a random 10 characters password will be used.
+  postgresqlPassword: change-me
+
+  # -- PostgreSQL Database to create.
+  postgresqlDatabase: traction
   initdbScripts:
     setup.sql: |
-      CREATE USER tractionuser CREATEDB;
+      CREATE USER tractionuser PASSWORD 'transactionPass';
       CREATE USER holderuser PASSWORD 'holderPass'; 
       CREATE USER verifieruser PASSWORD 'verifierPass';
-      CREATE DATABASE traction;
       \connect traction;
       CREATE SCHEMA IF NOT EXISTS holder AUTHORIZATION holderuser;
       CREATE SCHEMA IF NOT EXISTS verifier AUTHORIZATION verifieruser;
       GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA holder TO holderuser;
       GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA verifier TO verifieruser;
-  # --  PostgreSQL service configuration
-  service:
-    port: 5432
-
-  # - postgres user/admin password
-  postgresqlPostgresPassword: change-me
-  postgresqlPassword: change-me
-  
-  # leave blank so init scripts run as postgres
-  postgresqlUsername: 
+      GRANT ALL ON ALL TABLES TO tractionuser;
 
   # --  Persistent Volume Storage configuration. ref: https://kubernetes.io/docs/user-guide/persistent-volumes
   persistence:
