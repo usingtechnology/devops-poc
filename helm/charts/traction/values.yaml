@@ -206,35 +206,30 @@ acapy:
     jwtSecret: 1234567
 
 postgresql:
+  initdbScripts:
+    setup.sql: |
+      CREATE USER tractionuser CREATEDB;
+      CREATE USER holderuser PASSWORD 'holderPass'; 
+      CREATE USER verifieruser PASSWORD 'verifierPass';
+      CREATE DATABASE traction;
+      \connect traction;
+      CREATE SCHEMA IF NOT EXISTS holder AUTHORIZATION holderuser;
+      CREATE SCHEMA IF NOT EXISTS verifier AUTHORIZATION verifieruser;
+      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA holder TO holderuser;
+      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA verifier TO verifieruser;
   # --  PostgreSQL service configuration
   service:
     port: 5432
 
-  # --  PostgreSQL admin password - username is postgres!
+  # - postgres user/admin password
   postgresqlPostgresPassword: change-me
 
-  # --  PostgreSQL User to create. This is a non admin user!
-  postgresqlUsername: transactionuser
+  # leave blank so init scripts run as postgres
+  postgresqlUsername: 
 
-  # --  PostgreSQL Password for the new user. If not set, a random 10 characters password will be used.
-  postgresqlPassword: change-me
-
-  # -- PostgreSQL Database to create.
-  postgresqlDatabase: traction
-
-  initdbScripts:
-    setup.sql: |
-      CREATE USER dbuser WITH PASSWORD 'secret';
-      CREATE USER holderuser3 PASSWORD 'holderPass'; 
-      CREATE USER verifieruser3 PASSWORD 'verifierPass';
-      CREATE DATABASE mydb WITH OWNER dbuser;
-      \connect mydb
-      CREATE SCHEMA IF NOT EXISTS holder3 AUTHORIZATION holderuser3;
-      CREATE SCHEMA IF NOT EXISTS verifier3 AUTHORIZATION verifieruser3;
-      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA holder3 TO holderuser2;
-      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA verifier3 TO verifieruser2;  
   # --  Persistent Volume Storage configuration. ref: https://kubernetes.io/docs/user-guide/persistent-volumes
   persistence:
+
     # -- Enable PostgreSQL persistence using Persistent Volume Claims.
     enabled: true
     size: 1Gi
